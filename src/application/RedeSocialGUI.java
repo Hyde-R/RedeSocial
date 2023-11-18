@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
@@ -31,7 +32,7 @@ public class RedeSocialGUI extends JFrame {
     
     public RedeSocialGUI(){
         this.setTitle("NewtWork");
-        this.setSize(400,200);
+        this.setSize(400,400);
         painel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 20));
         painel.setBackground(new Color(102, 0, 211));
         JTextArea textArea = new JTextArea(10, 30); // 10 linhas por 30 colunas
@@ -42,7 +43,12 @@ public class RedeSocialGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
             	System.out.println("Botão de Cadastrar Usuários funcionou!");
-                user.cadastrarUsuario();
+                try {
+					user.cadastrarUsuario();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         });
         

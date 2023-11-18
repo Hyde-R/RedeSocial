@@ -1,12 +1,18 @@
 package model.entities;
 
 import java.awt.TextField;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import conexaobd.CadastrarUsuario;
+import conexaobd.LogarUsuario;
 import model.exceptions.DomainException;
 
 public class Usuario {
@@ -17,13 +23,14 @@ public class Usuario {
 	private String naturalidade;
 	private String nascimento;
 	private String genero;
-	
-	Scanner sc = new Scanner(System.in);
+	private CadastrarUsuario novoUsuario = null;
+	private LogarUsuario login = null;
 	
 	ArrayList<Usuario> usuarios = new ArrayList<>();
 	
 	public Usuario() {
-		
+		this.novoUsuario = new CadastrarUsuario();
+		this.login = new LogarUsuario();
 	}
 	
 	public Usuario(ArrayList<Usuario> usuarios) {
@@ -87,46 +94,43 @@ public class Usuario {
 		this.genero = genero;
 	}
 	
-	public void cadastrarUsuario() {
-		nome = JOptionPane.showInputDialog(null, "Digite seu nome");
-		email = JOptionPane.showInputDialog(null, "Digite seu e-mail");
-		senha = JOptionPane.showInputDialog(null, "Digite sua senha");
-		naturalidade = JOptionPane.showInputDialog(null, "Digite sua naturalidade");
-		nascimento = JOptionPane.showInputDialog(null, "Digite sua data de nascimento");
-		genero = JOptionPane.showInputDialog(null, "Digite seu gênero (M / F)");
-		
-		Usuario user = new Usuario(nome, email, senha, naturalidade, nascimento, genero);
-		usuarios.add(user);
-	}
-	
-	public void listarUsuario(ArrayList<Usuario> usuarios, JTextArea textArea) {
-	    textArea.setText("");
-	    if (usuarios.isEmpty()) {
-	        textArea.append("Nenhum usuário cadastrado ainda.");
-	    } else {
-	    	for (Usuario user : usuarios) {
-		        textArea.append("Nome: " + user.getNome() + "\nE-mail: " + user.getEmail() + "\n\n");
-		    }
+	// Realizar o cadastro de um usuario
+	public void cadastrarUsuario() throws SQLException {
+		try {
+			Date nascimentoData = null;
+			nome = JOptionPane.showInputDialog(null, "Digite seu nome");
+			email = JOptionPane.showInputDialog(null, "Digite seu e-mail");
+			senha = JOptionPane.showInputDialog(null, "Digite sua senha");
+			naturalidade = JOptionPane.showInputDialog(null, "Digite sua naturalidade");
+			nascimento = JOptionPane.showInputDialog(null, "Digite sua data de nascimento");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			nascimentoData = dateFormat.parse(nascimento);
+			genero = JOptionPane.showInputDialog(null, "Digite seu gênero (M / F)");
+			Date nascimentoSql = new Date(nascimentoData.getTime());
+			novoUsuario.inserirUsuarioBanco(nome, email, senha, naturalidade, nascimentoData, genero);
+			Usuario user = new Usuario(nome, email, senha, naturalidade, nascimento, genero);
+			usuarios.add(user);
+		}
+		catch(ParseException e){
+	        e.printStackTrace();
+
 	    }
-	    
 	}
 	
-	public void apagarUsuario(ArrayList<Usuario> usuarios) throws DomainException {
-		nome = JOptionPane.showInputDialog(null, "Digite o nome do usuário a ser excluído");
-		Usuario usuarioExcluir = null;
-		
-		for(Usuario user : usuarios) {
-			if(nome.equals(user.getNome())) {
-				usuarioExcluir = user;
-			}
-		}
-		
-		if(usuarioExcluir != null) {
-			usuarios.remove(usuarioExcluir);
-			JOptionPane.showMessageDialog(null, "Usuário excluído com sucesso!");
-		}
-		else {
-			throw new DomainException("Usuário não foi encontrado e portanto não pode ser excluído!");
-		}
+	// Validar se o usuário existe e senha está correta para acessar a Rede Social
+	public boolean logarUsuario() throws SQLException {
+	    String nomeX = JOptionPane.showInputDialog(null, "Digite seu nome");
+	    String senhaX = JOptionPane.showInputDialog(null, "Digite sua senha");
+	    
+	    boolean encontradoBanco = login.verificarUsuarioBanco(nomeX, senhaX);
+
+	    if (encontradoBanco) {
+	    	JOptionPane.showMessageDialog(null, "Bem vindo a Newtwork!");
+	        return true;
+	    } else {
+	        JOptionPane.showMessageDialog(null, "Acesso negado! Usuário ou senha inválidos.");
+	        return false;
+	    }
 	}
+	
 }
