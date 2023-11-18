@@ -52,21 +52,6 @@ public class RedeSocialGUI extends JFrame {
             }
         });
         
-        jButtonListarUsuarios.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	System.out.println("Botão de Listar Usuários funcionou!");
-                user.listarUsuario(usuarios, textArea);
-            }
-        });
-        
-        jButtonExcluirUsuario.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	System.out.println("Botão de Excluir Usuários funcionou!");
-                user.apagarUsuario(usuarios);
-            }
-        });
 
         painel.add(jButtonCadastrar);
         painel.add(jButtonListarUsuarios);

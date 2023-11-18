@@ -11,7 +11,10 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import conexaobd.AdicionarAmigo;
 import conexaobd.CadastrarUsuario;
+import conexaobd.ConexaoPostgre;
+import conexaobd.ExcluirAmigo;
 import conexaobd.LogarUsuario;
 import model.exceptions.DomainException;
 
@@ -24,13 +27,18 @@ public class Usuario {
 	private String nascimento;
 	private String genero;
 	private CadastrarUsuario novoUsuario = null;
+	private ConexaoPostgre cc = new ConexaoPostgre();
 	private LogarUsuario login = null;
+	private AdicionarAmigo aa = null;
+	private ExcluirAmigo ea = null;
 	
 	ArrayList<Usuario> usuarios = new ArrayList<>();
 	
 	public Usuario() {
 		this.novoUsuario = new CadastrarUsuario();
 		this.login = new LogarUsuario();
+		this.aa = new AdicionarAmigo();
+		this.ea = new ExcluirAmigo();
 	}
 	
 	public Usuario(ArrayList<Usuario> usuarios) {
@@ -117,20 +125,63 @@ public class Usuario {
 	    }
 	}
 	
-	// Validar se o usuário existe e senha está correta para acessar a Rede Social
-	public boolean logarUsuario() throws SQLException {
-	    String nomeX = JOptionPane.showInputDialog(null, "Digite seu nome");
-	    String senhaX = JOptionPane.showInputDialog(null, "Digite sua senha");
-	    
-	    boolean encontradoBanco = login.verificarUsuarioBanco(nomeX, senhaX);
+	public boolean logarUsuario(String nomeX, String senhaX) throws SQLException, DomainException {
+		
+		try {
+		    
+		    boolean encontradoBanco = login.verificarUsuarioBanco(nomeX, senhaX);
 
-	    if (encontradoBanco) {
-	    	JOptionPane.showMessageDialog(null, "Bem vindo a Newtwork!");
-	        return true;
-	    } else {
-	        JOptionPane.showMessageDialog(null, "Acesso negado! Usuário ou senha inválidos.");
-	        return false;
-	    }
+		    if (encontradoBanco) {
+		    	JOptionPane.showMessageDialog(null, "Bem vindo a Newtwork!");
+		        return true;
+		    } else {
+		        JOptionPane.showMessageDialog(null, "Acesso negado! Usuário ou senha inválidos.");
+		        return false;
+		    }
+		}
+		catch(DomainException e) {
+			e.getMessage();
+		}
+		return false;
+	    
+	}
+	
+	public void adicionarAmigo(String usuarioLogado) throws SQLException {
+		try {
+			String amigoNovo = JOptionPane.showInputDialog(null, "Qual o nome do amigo que deseja adicionar?");
+			
+			boolean encontradoBanco = cc.validarUsuarioBanco(amigoNovo);
+			
+			if (encontradoBanco) {
+				aa.adicionarAmigoBanco(usuarioLogado, amigoNovo);
+		    	JOptionPane.showMessageDialog(null, "Amigo adicionado com sucesso!");
+		    } else {
+		        JOptionPane.showMessageDialog(null, "Usuario não encontrado, e portanto, não foi adicionado.");
+		    }
+		}
+		catch(DomainException e) {
+			e.getMessage();
+		}
+		
+	}
+	
+	public void excluirAmigo(String usuarioLogado) throws SQLException {
+		try {
+			String amigoExcluir = JOptionPane.showInputDialog(null, "Qual o nome do amigo que deseja excluir?");
+			
+			boolean encontradoBanco = cc.validarUsuarioBanco(amigoExcluir);
+			
+			if (encontradoBanco) {
+				ea.excluirAmigoBanco(usuarioLogado, amigoExcluir);
+		    	JOptionPane.showMessageDialog(null, "Amigo excluído com sucesso!");
+		    } else {
+		        JOptionPane.showMessageDialog(null, "Amigo não encontrado, e portanto, não foi excluído.");
+		    }
+		}
+		catch(DomainException e) {
+			e.getMessage();
+		}
+		
 	}
 	
 }
