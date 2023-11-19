@@ -14,6 +14,7 @@ import javax.swing.JTextArea;
 import conexaobd.AdicionarAmigo;
 import conexaobd.CadastrarUsuario;
 import conexaobd.ConexaoPostgre;
+import conexaobd.EnviarMensagem;
 import conexaobd.ExcluirAmigo;
 import conexaobd.ListarAmigos;
 import conexaobd.LogarUsuario;
@@ -33,6 +34,7 @@ public class Usuario {
 	private AdicionarAmigo aa = null;
 	private ExcluirAmigo ea = null;
 	private ListarAmigos la = new ListarAmigos();
+	private EnviarMensagem em = new EnviarMensagem();
 	
 	ArrayList<Usuario> usuarios = new ArrayList<>();
 	
@@ -200,6 +202,25 @@ public class Usuario {
 	public void listarAmigos(String usuarioLogado) throws SQLException {
 		try {
 			la.listarAmigos(usuarioLogado);
+		}
+		catch(DomainException e) {
+			e.getMessage();
+		}
+		
+	}
+	
+	public void enviarMensagens(String usuarioLogado) throws SQLException {
+		String amigoMensagem = JOptionPane.showInputDialog(null, "Para qual amigo deseja mandar uma mensagem?");
+		boolean encontrado = cc.validarUsuarioBanco(amigoMensagem);
+		try {
+			if(encontrado) {
+				String conteudo = JOptionPane.showInputDialog(null, "Digite a mensagem aqui");
+				em.enviarMensagemBanco(usuarioLogado, amigoMensagem, conteudo);
+				JOptionPane.showMessageDialog(null, "Mensagem enviada com sucesso!");
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Amigo não encontrado, portanto, a mensagem não foi enviada!");
+			}
 		}
 		catch(DomainException e) {
 			e.getMessage();

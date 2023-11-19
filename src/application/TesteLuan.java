@@ -15,6 +15,14 @@ public class TesteLuan {
 		boolean testeLogin = false;
 		String nomeX = "";
 		String senhaX = "";
+		
+		opcao = JOptionPane.showInputDialog(null, "Você já possui cadastro? \n<1 - Cadastrar \n<2 - Logar");
+		int opcaoX1 = Integer.parseInt(opcao);
+		switch (opcaoX1) {
+		case 1:
+			user.cadastrarUsuario();
+			break;
+		}
 
 		try {
 			do {
@@ -29,8 +37,8 @@ public class TesteLuan {
 		opcao = JOptionPane.showInputDialog(null,
 				"Agora que você logou, o que deseja fazer? \n\n<1>Adicionar amigo \n<2>Listar amigos \n<3>Enviar mensagens para um amigo"
 				+ "\n<4>Excluir um amigo \n<5>Logout");
-		int opcaoX = Integer.parseInt(opcao);
-		switch (opcaoX) {
+		int opcaoX2 = Integer.parseInt(opcao);
+		switch (opcaoX2) {
 		case 1:
 			user.adicionarAmigo(nomeX);
 			break;
@@ -40,6 +48,7 @@ public class TesteLuan {
 			break;
 			
 		case 3:
+			user.enviarMensagens(nomeX);
 			break;
 
 		case 4:

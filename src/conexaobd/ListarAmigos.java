@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
@@ -23,6 +24,8 @@ public class ListarAmigos extends ConexaoPostgre {
 
     public void listarAmigos(String usuarioLogado) throws SQLException {
         System.out.println(QUERY_AMIGOS);
+        
+        ArrayList<String> amigos = new ArrayList<>();
         // Step 1: Establishing a Connection
         try (Connection connection = DriverManager.getConnection(url, user, password);
 
@@ -37,8 +40,17 @@ public class ListarAmigos extends ConexaoPostgre {
             
             while(rs.next()) {
             	String nomeAmigo = rs.getString("nome_amigo");
-            	System.out.println(nomeAmigo);
+            	amigos.add(nomeAmigo);
+            	
             }
+            
+            StringBuilder amigosText = new StringBuilder();
+            for (String amigo : amigos) {
+                amigosText.append(amigo).append("\n"); // Adiciona o nome do amigo ao texto
+            }
+
+            // Exibe todos os nomes de amigos na interface gráfica
+            JOptionPane.showMessageDialog(null, amigosText.toString());
         } catch (SQLException e) {
 
             // print SQL exception information
