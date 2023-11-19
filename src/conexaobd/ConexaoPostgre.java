@@ -11,16 +11,42 @@ public class ConexaoPostgre {
 	 public final String user = "postgres";
 	 public final String password = "22194";
 	 
-	 private static final String VALIDAR_QUERY ="SELECT COUNT(*) AS count FROM tbusuario WHERE nome =?";
+	 private static final String VALIDAR_QUERY_NOME ="SELECT COUNT(*) AS count FROM tbusuario WHERE nome =?";
+	 private static final String VALIDAR_QUERY_EMAIL ="SELECT COUNT(*) AS count FROM tbusuario WHERE nome =?";
+	 
 	 
 	 public boolean validarUsuarioBanco(String nome) throws SQLException {
 		    boolean encontrado = false;
 
 		    try (Connection connection = DriverManager.getConnection(url, user, password);
 		    		
-		        PreparedStatement preparedStatement = connection.prepareStatement(VALIDAR_QUERY)) {
+		        PreparedStatement preparedStatement = connection.prepareStatement(VALIDAR_QUERY_NOME)) {
 
 		        preparedStatement.setString(1, nome);
+
+		        ResultSet resultSet = preparedStatement.executeQuery();
+		        
+		        System.out.println(preparedStatement);
+
+		        // Se houver algum resultado na consulta, significa que o usuário foi encontrado
+		        if (resultSet.next() && resultSet.getInt("count") > 0) {
+		            encontrado = true;
+		        }
+		    } catch (SQLException e) {
+		        printSQLException(e);
+		    }
+
+		    return encontrado;
+		}
+	 
+	 public boolean validarUsuarioBancoEmail(String email) throws SQLException {
+		    boolean encontrado = false;
+
+		    try (Connection connection = DriverManager.getConnection(url, user, password);
+		    		
+		        PreparedStatement preparedStatement = connection.prepareStatement(VALIDAR_QUERY_EMAIL)) {
+
+		        preparedStatement.setString(1, email);
 
 		        ResultSet resultSet = preparedStatement.executeQuery();
 		        

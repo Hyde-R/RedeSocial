@@ -12,25 +12,33 @@ import javax.swing.JOptionPane;
 import model.entities.Usuario;
 
 
-public class AdicionarAmigo extends ConexaoPostgre {
+public class ListarAmigos extends ConexaoPostgre {
 
-    private static final String INSERT_AMIGO = "INSERT INTO tbamizade" +
-            " (id_usuario1, id_usuario2) VALUES " +
-            " (?, ?);";
+    private static final String QUERY_AMIGOS = "SELECT CASE " +
+    	    "WHEN id_usuario1 = ? THEN id_usuario2 " +
+    	    "ELSE id_usuario1 " +
+    	    "END AS nome_amigo " +
+    	    "FROM tbamizade " +
+    	    "WHERE id_usuario1 = ? OR id_usuario2 = ?";
 
-    public void adicionarAmigoBanco(String usuarioLogado, String novoAmigo) throws SQLException {
-        System.out.println(INSERT_AMIGO);
+    public void listarAmigos(String usuarioLogado) throws SQLException {
+        System.out.println(QUERY_AMIGOS);
         // Step 1: Establishing a Connection
         try (Connection connection = DriverManager.getConnection(url, user, password);
 
              // Step 2:Create a statement using connection object
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AMIGO)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(QUERY_AMIGOS)) {
             preparedStatement.setString(1, usuarioLogado);
-            preparedStatement.setString(2, novoAmigo);
-
+            preparedStatement.setString(2, usuarioLogado);
+            preparedStatement.setString(3, usuarioLogado);
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query
-            preparedStatement.executeUpdate();
+            ResultSet rs = preparedStatement.executeQuery();
+            
+            while(rs.next()) {
+            	String nomeAmigo = rs.getString("nome_amigo");
+            	System.out.println(nomeAmigo);
+            }
         } catch (SQLException e) {
 
             // print SQL exception information
@@ -40,5 +48,6 @@ public class AdicionarAmigo extends ConexaoPostgre {
         // Step 4: try-with-resource statement will auto close the connection.
     }
     
+	
     
 }

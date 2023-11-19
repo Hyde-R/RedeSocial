@@ -15,6 +15,7 @@ import conexaobd.AdicionarAmigo;
 import conexaobd.CadastrarUsuario;
 import conexaobd.ConexaoPostgre;
 import conexaobd.ExcluirAmigo;
+import conexaobd.ListarAmigos;
 import conexaobd.LogarUsuario;
 import model.exceptions.DomainException;
 
@@ -31,6 +32,7 @@ public class Usuario {
 	private LogarUsuario login = null;
 	private AdicionarAmigo aa = null;
 	private ExcluirAmigo ea = null;
+	private ListarAmigos la = new ListarAmigos();
 	
 	ArrayList<Usuario> usuarios = new ArrayList<>();
 	
@@ -39,6 +41,7 @@ public class Usuario {
 		this.login = new LogarUsuario();
 		this.aa = new AdicionarAmigo();
 		this.ea = new ExcluirAmigo();
+		this.la = new ListarAmigos();
 	}
 	
 	public Usuario(ArrayList<Usuario> usuarios) {
@@ -110,14 +113,24 @@ public class Usuario {
 			email = JOptionPane.showInputDialog(null, "Digite seu e-mail");
 			senha = JOptionPane.showInputDialog(null, "Digite sua senha");
 			naturalidade = JOptionPane.showInputDialog(null, "Digite sua naturalidade");
-			nascimento = JOptionPane.showInputDialog(null, "Digite sua data de nascimento");
+			nascimento = JOptionPane.showInputDialog(null, "Digite sua data de nascimento (ano-mês-dia)");
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			nascimentoData = dateFormat.parse(nascimento);
 			genero = JOptionPane.showInputDialog(null, "Digite seu gênero (M / F)");
 			Date nascimentoSql = new Date(nascimentoData.getTime());
-			novoUsuario.inserirUsuarioBanco(nome, email, senha, naturalidade, nascimentoData, genero);
-			Usuario user = new Usuario(nome, email, senha, naturalidade, nascimento, genero);
-			usuarios.add(user);
+			
+			if(cc.validarUsuarioBanco(nome) == true) {
+				JOptionPane.showMessageDialog(null, "O nome digitado já foi escolhido por outro usuário. Por favor, defina um novo.");
+			}
+			else if(cc.validarUsuarioBanco(email) == true) {
+				JOptionPane.showMessageDialog(null, "O email digitado já está em uso. Por favor, selecione outro email.");
+			}
+			else {
+				novoUsuario.inserirUsuarioBanco(nome, email, senha, naturalidade, nascimentoData, genero);
+				Usuario user = new Usuario(nome, email, senha, naturalidade, nascimento, genero);
+				usuarios.add(user);
+			}
+			
 		}
 		catch(ParseException e){
 	        e.printStackTrace();
@@ -181,7 +194,16 @@ public class Usuario {
 		catch(DomainException e) {
 			e.getMessage();
 		}
-		
+			
+		}
+	
+	public void listarAmigos(String usuarioLogado) throws SQLException {
+		try {
+			la.listarAmigos(usuarioLogado);
+		}
+		catch(DomainException e) {
+			e.getMessage();
+		}
 	}
 	
 }

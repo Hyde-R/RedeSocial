@@ -14,7 +14,7 @@ import model.entities.Usuario;
 
 public class ExcluirAmigo extends ConexaoPostgre {
 
-    private static final String DELETE_AMIGO = "DELETE FROM amizades WHERE (id_usuario1 = ? AND id_usuario2 = ?)";
+    private static final String DELETE_AMIGO = "DELETE FROM tbamizade WHERE (id_usuario1 = ? AND id_usuario2 = ?)";
 
     public void excluirAmigoBanco(String usuarioLogado, String amigoExcluir) throws SQLException {
         System.out.println(DELETE_AMIGO);
