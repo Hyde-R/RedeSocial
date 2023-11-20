@@ -16,7 +16,7 @@ public class TesteLuan {
 		String nomeX = "";
 		String senhaX = "";
 		
-		opcao = JOptionPane.showInputDialog(null, "Você já possui cadastro? \n<1 - Cadastrar \n<2 - Logar");
+		opcao = JOptionPane.showInputDialog(null, "Você já possui cadastro? \n<1> - Cadastrar \n<2> - Logar");
 		int opcaoX1 = Integer.parseInt(opcao);
 		switch (opcaoX1) {
 		case 1:
@@ -36,7 +36,7 @@ public class TesteLuan {
 		}
 		opcao = JOptionPane.showInputDialog(null,
 				"Agora que você logou, o que deseja fazer? \n\n<1>Adicionar amigo \n<2>Listar amigos \n<3>Enviar mensagens para um amigo"
-				+ "\n<4>Excluir um amigo \n<5>Logout");
+				+ "\n<4>Listar Conversa \n<5>Excluir um amigo \n<6>Logout");
 		int opcaoX2 = Integer.parseInt(opcao);
 		switch (opcaoX2) {
 		case 1:
@@ -52,10 +52,14 @@ public class TesteLuan {
 			break;
 
 		case 4:
+			user.listarMensagens(nomeX);
+			break;
+
+		case 5:
 			user.excluirAmigo(nomeX);
 			break;
 			
-		case 5:
+		case 6:
 			JOptionPane.showMessageDialog(null, "Deslogado. \nAté a próxima!");
 		}
 

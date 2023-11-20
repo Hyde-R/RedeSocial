@@ -11,13 +11,7 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
-import conexaobd.AdicionarAmigo;
-import conexaobd.CadastrarUsuario;
-import conexaobd.ConexaoPostgre;
-import conexaobd.EnviarMensagem;
-import conexaobd.ExcluirAmigo;
-import conexaobd.ListarAmigos;
-import conexaobd.LogarUsuario;
+import conexaobd.*;
 import model.exceptions.DomainException;
 
 public class Usuario {
@@ -35,6 +29,7 @@ public class Usuario {
 	private ExcluirAmigo ea = null;
 	private ListarAmigos la = new ListarAmigos();
 	private EnviarMensagem em = new EnviarMensagem();
+	private ListarMensagens lm = new ListarMensagens();
 	
 	ArrayList<Usuario> usuarios = new ArrayList<>();
 	
@@ -207,6 +202,24 @@ public class Usuario {
 			e.getMessage();
 		}
 		
+	}
+
+	public void listarMensagens(String usuarioLogado) throws SQLException {
+		try {
+			String amigoConversa = JOptionPane.showInputDialog(null, "Deseja ver a conversa com qual amigo?");
+			boolean encontradoBanco = cc.validarUsuarioBanco(amigoConversa);
+
+			if(encontradoBanco){
+				lm.listarMensagens(usuarioLogado, amigoConversa);
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "Não há registro de mensagens com esse usuário.");
+			}
+		}
+		catch(DomainException e) {
+			e.getMessage();
+		}
+
 	}
 	
 	public void enviarMensagens(String usuarioLogado) throws SQLException {
