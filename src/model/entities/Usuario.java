@@ -111,8 +111,17 @@ public class Usuario {
 				nome = JOptionPane.showInputDialog(null, "Nome inválido! Digite novamente");
 			}
 			email = JOptionPane.showInputDialog(null, "Digite seu e-mail");
+			while(email.length() < 1 || email.isEmpty() || email.isBlank()) {
+				email = JOptionPane.showInputDialog(null, "Nome inválido! Digite novamente");
+			}
 			senha = JOptionPane.showInputDialog(null, "Digite sua senha");
+			while(senha.length() < 1 || senha.isEmpty() || senha.isBlank()) {
+				senha = JOptionPane.showInputDialog(null, "Nome inválido! Digite novamente");
+			}
 			naturalidade = JOptionPane.showInputDialog(null, "Digite sua naturalidade");
+			while(naturalidade.length() < 1 || naturalidade.isEmpty() || naturalidade.isBlank()) {
+				naturalidade = JOptionPane.showInputDialog(null, "Nome inválido! Digite novamente");
+			}
 			
 			boolean dataInvalida = true;
 			while(dataInvalida) {
@@ -124,6 +133,7 @@ public class Usuario {
 					JOptionPane.showMessageDialog(null, "Digite uma data válida!\n");
 			    }
 			}
+			
 			genero = JOptionPane.showInputDialog(null, "Digite seu gênero (M / F)");
 			while(genero.length() != 1 || genero.charAt(0) != 'M' && genero.charAt(0) != 'F' && genero.charAt(0) != 'm' && genero.charAt(0) != 'f') {
 				JOptionPane.showMessageDialog(null, "Genero inválido!");
