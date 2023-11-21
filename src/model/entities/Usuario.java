@@ -104,16 +104,33 @@ public class Usuario {
 	
 	// Realizar o cadastro de um usuario
 	public void cadastrarUsuario() throws SQLException {
-		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Date nascimentoData = null;
 			nome = JOptionPane.showInputDialog(null, "Digite seu nome");
+			while(nome.length() < 1 || nome.isEmpty() || nome.isBlank()) {
+				nome = JOptionPane.showInputDialog(null, "Nome inválido! Digite novamente");
+			}
 			email = JOptionPane.showInputDialog(null, "Digite seu e-mail");
 			senha = JOptionPane.showInputDialog(null, "Digite sua senha");
 			naturalidade = JOptionPane.showInputDialog(null, "Digite sua naturalidade");
-			nascimento = JOptionPane.showInputDialog(null, "Digite sua data de nascimento (ano-mês-dia)");
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			nascimentoData = dateFormat.parse(nascimento);
+			
+			boolean dataInvalida = true;
+			while(dataInvalida) {
+				nascimento = JOptionPane.showInputDialog(null, "Digite sua data de nascimento (ano-mês-dia)");
+				try {
+					nascimentoData = dateFormat.parse(nascimento);
+					dataInvalida = false;
+				} catch(ParseException e){
+					JOptionPane.showMessageDialog(null, "Digite uma data válida!\n");
+			    }
+			}
 			genero = JOptionPane.showInputDialog(null, "Digite seu gênero (M / F)");
+			while(genero.length() != 1 || genero.charAt(0) != 'M' && genero.charAt(0) != 'F' && genero.charAt(0) != 'm' && genero.charAt(0) != 'f') {
+				JOptionPane.showMessageDialog(null, "Genero inválido!");
+				genero = JOptionPane.showInputDialog(null, "Digite seu gênero (M / F)");
+			}
+			genero = genero.toUpperCase();
+			
 			Date nascimentoSql = new Date(nascimentoData.getTime());
 			
 			if(cc.validarUsuarioBanco(nome) == true) {
@@ -126,13 +143,8 @@ public class Usuario {
 				novoUsuario.inserirUsuarioBanco(nome, email, senha, naturalidade, nascimentoData, genero);
 				Usuario user = new Usuario(nome, email, senha, naturalidade, nascimento, genero);
 				usuarios.add(user);
-			}
-			
-		}
-		catch(ParseException e){
-	        e.printStackTrace();
-
-	    }
+				JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
+			}	
 	}
 	
 	public boolean logarUsuario(String nomeX, String senhaX) throws SQLException, DomainException {
@@ -158,21 +170,37 @@ public class Usuario {
 	
 	public void adicionarAmigo(String usuarioLogado) throws SQLException {
 		try {
-			String amigoNovo = JOptionPane.showInputDialog(null, "Qual o nome do amigo que deseja adicionar?");
-			
-			boolean encontradoBanco = cc.validarUsuarioBanco(amigoNovo);
-			
-			if (encontradoBanco) {
-				aa.adicionarAmigoBanco(usuarioLogado, amigoNovo);
-		    	JOptionPane.showMessageDialog(null, "Amigo adicionado com sucesso!");
-		    } else {
-		        JOptionPane.showMessageDialog(null, "Usuario não encontrado, e portanto, não foi adicionado.");
-		    }
+			String amigoNovo = JOptionPane.showInputDialog(null, "Qual o nome do amigo que deseja adicionar?", "Indique um usuário", JOptionPane.PLAIN_MESSAGE);
+			if(!amigoNovo.isEmpty()) {
+				boolean encontradoBanco = cc.validarUsuarioBanco(usuarioLogado);
+				
+				if (encontradoBanco) {
+					JOptionPane.showMessageDialog(null, "Você não pode adicionar a sí mesmo", "Erro", JOptionPane.ERROR_MESSAGE);
+				}
+					encontradoBanco = cc.validarUsuarioBanco(amigoNovo);
+					if (amigoNovo != null) {
+						if (encontradoBanco) {
+							if(!amigoNovo.equals(usuarioLogado)) {
+								aa.adicionarAmigoBanco(usuarioLogado, amigoNovo);
+								JOptionPane.showMessageDialog(null, "Amigo adicionado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+							}
+						} else {
+							JOptionPane.showMessageDialog(null, "Usuário inexistente!", "Erro", JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						System.err.println("Operação cancelada");
+					}
+				}else{
+					System.err.println("Digite algum usuário.");
+					JOptionPane.showMessageDialog(null, "Digite algum usuário", "Erro", JOptionPane.ERROR_MESSAGE);
+				}
 		}
 		catch(DomainException e) {
 			e.getMessage();
+		}catch(NullPointerException e){
+			e.getMessage();
 		}
-		
+
 	}
 	
 	public void excluirAmigo(String usuarioLogado) throws SQLException {
